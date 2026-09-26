@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Object & Image Identifier</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <!-- THEME STYLES -->
+    <style>
+        /* 1. Natural Theme (Default) */
+
+        /* 2. Light Theme */
+        body[data-theme="light"] {
+            background-color: #f8fafc !important;
+            color: #0f172a !important;
+        }
+
+        body[data-theme="light"] .bg-slate-900,
+        body[data-theme="light"] .bg-slate-950\/50,
+        body[data-theme="light"] .bg-slate-800,
+        body[data-theme="light"] .bg-slate-800\/50,
+        body[data-theme="light"] .bg-slate-900\/60 {
+            background-color: #ffffff !important;
+        }
+
+        body[data-theme="light"] .text-slate-100,
+        body[data-theme="light"] .text-slate-200,
+        body[data-theme="light"] .text-white {
+            color: #0f172a !important;
+        }
+
+        body[data-theme="light"] .text-slate-300,
+        body[data-theme="light"] .text-slate-400 {
+            color: #334155 !important;
+        }
+
+        body[data-theme="light"] .text-slate-500 {
+            color: #64748b !important;
+        }
+
+        body[data-theme="light"] .border-slate-800,
+        body[data-theme="light"] .border-slate-700,
+        body[data-theme="light"] .border-slate-700\/60,
+        body[data-theme="light"] .border-slate-600 {
+            border-color: #e2e8f0 !important;
+        }
+
+        body[data-theme="light"] input,
+        body[data-theme="light"] select {
+            background-color: #f1f5f9 !important;
+            color: #0f172a !important;
+            border-color: #cbd5e1 !important;
+        }
+
+        body[data-theme="light"] option {
+            background-color: #ffffff !important;
+        }
+
+        /* 3. Pitch Dark Theme */
+        body[data-theme="dark"] {
+            background-color: #000000 !important;
+        }
+
+        body[data-theme="dark"] .bg-slate-900 {
+            background-color: #000000 !important;
+        }
+
+        body[data-theme="dark"] .bg-slate-950\/50 {
+            background-color: rgba(10, 10, 10, 0.9) !important;
+        }
+
+        body[data-theme="dark"] .bg-slate-800,
+        body[data-theme="dark"] .bg-slate-800\/50 {
+            background-color: #111111 !important;
+        }
+
+        body[data-theme="dark"] .bg-slate-900\/60 {
+            background-color: #0a0a0a !important;
+        }
+
+        body[data-theme="dark"] .border-slate-800,
+        body[data-theme="dark"] .border-slate-700,
+        body[data-theme="dark"] .border-slate-700\/60,
+        body[data-theme="dark"] .border-slate-600 {
+            border-color: #222222 !important;
+        }
+
+        /* 4. Ocean Blue Theme */
+        body[data-theme="ocean"] {
+            background-color: #082f49 !important;
+        }
+
+        body[data-theme="ocean"] .bg-slate-900 {
+            background-color: #082f49 !important;
+        }
+
+        body[data-theme="ocean"] .bg-slate-950\/50 {
+            background-color: rgba(7, 40, 64, 0.9) !important;
+        }
+
+        body[data-theme="ocean"] .bg-slate-800,
+        body[data-theme="ocean"] .bg-slate-800\/50 {
+            background-color: #0c4a6e !important;
+        }
+
+        body[data-theme="ocean"] .bg-slate-900\/60 {
+            background-color: #073a56 !important;
+        }
+
+        body[data-theme="ocean"] .border-slate-800,
+        body[data-theme="ocean"] .border-slate-700,
+        body[data-theme="ocean"] .border-slate-700\/60,
+        body[data-theme="ocean"] .border-slate-600 {
+            border-color: #0284c7 !important;
+        }
+
+        /* 5. Forest Green Theme */
+        body[data-theme="forest"] {
+            background-color: #064e3b !important;
+        }
+
+        body[data-theme="forest"] .bg-slate-900 {
+            background-color: #064e3b !important;
+        }
+
+        body[data-theme="forest"] .bg-slate-950\/50 {
+            background-color: rgba(2, 44, 34, 0.9) !important;
+        }
+
+        body[data-theme="forest"] .bg-slate-800,
+        body[data-theme="forest"] .bg-slate-800\/50 {
+            background-color: #065f46 !important;
+        }
+
+        body[data-theme="forest"] .bg-slate-900\/60 {
+            background-color: #047857 !important;
+        }
+
+        body[data-theme="forest"] .border-slate-800,
+        body[data-theme="forest"] .border-slate-700,
+        body[data-theme="forest"] .border-slate-700\/60,
+        body[data-theme="forest"] .border-slate-600 {
+            border-color: #059669 !important;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans" data-theme="natural">
+
+    <!-- Welcome & Name Entry Modal -->
+    <div id="nameModal" class="fixed inset-0 z-[100] bg-black/95 flex flex-col items-center justify-center p-4">
+        <div class="w-full max-w-md bg-slate-800 rounded-2xl p-6 border border-slate-700 text-center shadow-2xl space-y-4">
+            <div class="bg-indigo-600/20 text-indigo-400 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-2 text-2xl">
+                <i class="fa-solid fa-user-astronaut"></i>
+            </div>
+            
+            <h2 class="text-2xl font-bold text-white">Welcome To SnapIq</h2>
+            <p class="text-slate-400 text-sm">Please Enter Your Name:</p>
+            
+            <form id="nameForm" class="space-y-4">
+                <div>
+                    <input type="text" id="userNameInput" placeholder="Enter Name..." required
+                        class="w-full bg-slate-900 border border-slate-600 rounded-xl p-3.5 text-white text-center focus:border-indigo-500 outline-none text-lg font-medium transition-all">
+                    
+                    <!-- Error Message Container -->
+                    <p id="nameError" class="text-rose-500 text-xs mt-2 hidden font-semibold"></p>
+                </div>
+                
+                <button type="submit" id="enterAppBtn"
+                    class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3 rounded-xl transition-all shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2 text-lg">
+                    Enter App <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="border-b border-slate-800 bg-slate-950/50 backdrop-blur py-4 px-6 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto flex justify-between items-center flex-wrap gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-indigo-600 p-2 rounded-lg">
+                    <i class="fa-solid fa-eye text-xl text-white"></i>
+                </div>
+                <h1 class="text-xl font-bold bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">
+                    SnapIq
+                </h1>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <!-- User Name Display in Header -->
+                <div id="userNameBadge" class="hidden flex items-center gap-2 bg-indigo-950/80 border border-indigo-500/40 text-indigo-300 px-3 py-1.5 rounded-xl text-sm font-semibold shadow-inner">
+                    <i class="fa-solid fa-circle-user text-indigo-400 text-base"></i>
+                    <span id="headerUserName">---</span>
+                </div>
+                <!-- Settings Button -->
+                <button id="openSettingsBtn"
+                    class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 px-3 py-2 rounded-lg transition-colors flex items-center gap-2">
+                    <i class="fa-solid fa-gear"></i> Settings
+                </button>
+                 
+                <span id="statusBadge"
+                    class="text-xs bg-slate-800 text-slate-400 px-3 py-1 rounded-full border border-slate-700">
+                    Ready
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto p-4 md:p-6 flex-1 w-full grid grid-cols-1 lg:grid-cols-12 gap-6 relative">
+
+        <!-- Settings Modal (Theme, Language, Detail Level) -->
+        <div id="settingsModal"
+            class="hidden fixed inset-0 z-50 bg-black/90 flex flex-col items-center justify-center p-4">
+            <div class="w-full max-w-md bg-slate-800 rounded-2xl p-6 border border-slate-700 shadow-2xl space-y-4">
+                <h2 class="text-xl font-bold text-white mb-2 flex items-center gap-2">
+                    <i class="fa-solid fa-sliders text-indigo-400"></i> App Settings
+                </h2>
+
+                <!-- Theme Option -->
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-1">App Theme</label>
+                    <select id="themeSelect"
+                        class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white focus:border-indigo-500 outline-none">
+                        <option value="natural">Natural (Default)</option>
+                        <option value="light">Light Mode</option>
+                        <option value="dark">Pitch Dark</option>
+                        <option value="ocean">Ocean Blue</option>
+                        <option value="forest">Forest Green</option>
+                    </select>
+                </div>
+
+                <!-- Language Option -->
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-1">Response Language</label>
+                    <select id="langSelect"
+                        class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white focus:border-indigo-500 outline-none">
+                        <option value="en" selected>English</option>
+                        <option value="ru">Roman Urdu (Casual)</option>
+                        <option value="rh">Roman Hindi</option>
+                    </select>
+                </div>
+
+                <!-- Scan Detail Level Option -->
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-1">Scan Detail Level</label>
+                    <select id="detailSelect"
+                        class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white focus:border-indigo-500 outline-none">
+                        <option value="short">Short Answer</option>
+                        <option value="medium" selected>Medium Answer (Normal)</option>
+                        <option value="detailed">Detailed Answer</option>
+                    </select>
+                </div>
+                <!-- Settings Action Buttons (Updated with Logout) -->
+<div class="mt-6 flex items-center justify-between pt-4 border-t border-slate-700/60">
+    <!-- Logout Button -->
+    <button id="logoutBtn" type="button"
+        class="bg-rose-600/20 hover:bg-rose-600 text-rose-400 hover:text-white border border-rose-500/30 px-3.5 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2">
+        <i class="fa-solid fa-right-from-bracket"></i> Logout
+    </button>
+
+
+</div>
+
+                <div class="mt-6 flex justify-end gap-3 pt-2">
+                    <button id="closeSettingsBtn"
+                        class="px-4 py-2 text-slate-300 hover:text-white transition-colors">Cancel</button>
+                    <button id="saveSettingsBtn"
+                        class="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2 rounded-lg font-medium transition-colors">Save
+                        Settings</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Camera Modal Overlay -->
+        <div id="cameraModal"
+            class="hidden fixed inset-0 z-50 bg-black/90 flex flex-col items-center justify-center p-4">
+            <div class="relative w-full max-w-lg bg-slate-800 rounded-2xl overflow-hidden border border-slate-700">
+                <video id="cameraStream" autoplay playsinline class="w-full h-[400px] object-cover bg-black"></video>
+                <div class="p-4 flex justify-between items-center bg-slate-900">
+                    <button id="closeCameraBtn"
+                        class="text-slate-400 hover:text-white px-4 py-2 rounded-lg transition-colors">Cancel</button>
+                    <button id="captureBtn"
+                        class="bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2 px-6 rounded-full flex items-center gap-2 transition-all">
+                        <i class="fa-solid fa-camera"></i> Capture
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Left Column: Upload Section -->
+        <div class="lg:col-span-5 flex flex-col gap-4">
+            <div class="bg-slate-800/50 border border-slate-700/60 rounded-2xl p-5 shadow-xl">
+                <h2 class="text-lg font-semibold text-slate-200 mb-3 flex items-center justify-between">
+                    <span class="flex items-center gap-2">
+                        <i class="fa-solid fa-cloud-arrow-up text-indigo-400"></i> Upload or Capture Image
+                    </span>
+                    <button id="openCameraBtn"
+                        class="text-sm bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-2">
+                        <i class="fa-solid fa-camera"></i> Camera
+                    </button>
+                </h2>
+
+                <!-- Dropzone -->
+                <div id="dropzone"
+                    class="border-2 border-dashed border-slate-600 hover:border-indigo-500 transition-colors rounded-xl p-6 text-center cursor-pointer bg-slate-900/50 flex flex-col items-center justify-center min-h-[220px] relative overflow-hidden group">
+                    <input type="file" id="imageInput" accept="image/*" class="hidden">
+
+                    <div id="uploadPrompt" class="flex flex-col items-center gap-2">
+                        <i class="fa-regular fa-image text-4xl text-slate-500 group-hover:text-indigo-400 transition-colors"></i>
+                        <p class="text-sm text-slate-300 font-medium">Click to browse or drag image here</p>
+                        <p class="text-xs text-slate-500">Supported formats: JPG, PNG, WEBP</p>
+                    </div>
+
+                    <!-- Image Preview -->
+                    <img id="imagePreview" class="hidden absolute inset-0 w-full h-full object-cover rounded-xl z-10" />
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="mt-4 flex gap-2">
+                    <button id="analyzeBtn" onclick="analyzeImage()"
+                        class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2.5 px-4 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20 disabled:opacity-50"
+                        disabled>
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Scan & Get Details
+                    </button>
+                    <button id="resetBtn" onclick="resetUpload()"
+                        class="bg-slate-700 hover:bg-slate-600 text-slate-300 px-4 rounded-xl transition-all hidden">
+                        <i class="fa-solid fa-rotate-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Results Dashboard -->
+        <div class="lg:col-span-7 flex flex-col">
+            <div class="bg-slate-800/50 border border-slate-700/60 rounded-2xl p-5 shadow-xl flex-1 flex flex-col">
+                <h2 class="text-lg font-semibold text-slate-200 mb-4 flex items-center justify-between">
+                    <span class="flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-emerald-400"></i> Analysis & Results
+                    </span>
+                </h2>
+
+                <!-- Loading State -->
+                <div id="loadingState"
+                    class="hidden my-auto py-12 flex flex-col items-center justify-center text-center">
+                    <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mb-4">
+                    </div>
+                    <p class="text-slate-300 font-medium">Processing Image via AI...</p>
+                </div>
+
+                <!-- Empty State -->
+                <div id="emptyState"
+                    class="my-auto py-12 flex flex-col items-center justify-center text-center text-slate-500">
+                    <i class="fa-solid fa-magnifying-glass-chart text-5xl mb-3 opacity-40"></i>
+                    <p class="text-slate-400 font-medium">Upload or capture an image to scan</p>
+                </div>
+
+                <!-- Results Grid -->
+                <div id="resultsGrid" class="hidden space-y-4 overflow-y-auto max-h-[550px] pr-1">
+                    <div class="bg-slate-900/60 border border-slate-700/40 rounded-xl p-4">
+                        <div class="text-xs text-indigo-400 font-semibold uppercase mb-1">1. Name</div>
+                        <div id="resName" class="text-slate-200 font-medium text-base">---</div>
+                    </div>
+                    <div class="bg-slate-900/60 border border-slate-700/40 rounded-xl p-4">
+                        <div class="text-xs text-cyan-400 font-semibold uppercase mb-1">2. Purpose</div>
+                        <div id="resPurpose" class="text-slate-300 text-sm">---</div>
+                    </div>
+                    <div class="bg-slate-900/60 border border-slate-700/40 rounded-xl p-4">
+                        <div class="text-xs text-emerald-400 font-semibold uppercase mb-1">3. Key Features</div>
+                        <div id="resFeatures" class="text-slate-300 text-sm">---</div>
+                    </div>
+                    <div class="bg-slate-900/60 border border-slate-700/40 rounded-xl p-4">
+                        <div class="text-xs text-amber-400 font-semibold uppercase mb-1">4. Value & Importance</div>
+                        <div id="resValue" class="text-slate-300 text-sm">---</div>
+                    </div>
+                    <div class="bg-slate-900/60 border border-slate-700/40 rounded-xl p-4">
+                        <div class="text-xs text-rose-400 font-semibold uppercase mb-1">5. Common Usage</div>
+                        <div id="resUsage" class="text-slate-300 text-sm">---</div>
+                    </div>
+                    <div class="bg-slate-900/60 border border-slate-700/40 rounded-xl p-4">
+                        <div class="text-xs text-purple-400 font-semibold uppercase mb-1">6. Extra Details</div>
+                        <div id="resDetails" class="text-slate-300 text-sm">---</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <canvas id="cameraCanvas" class="hidden"></canvas>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 bg-slate-950/60 py-4 px-6 mt-auto">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-slate-400">
+            <div>
+                <span>SnapIq &copy; 2026 Ai Tool Made By <span style="color: white;"> SnapIq</span></span>
+            </div>
+
+            <div class="flex items-center gap-6">
+                <!-- Instagram Link -->
+                <a href="https://www.instagram.com/hussainn_buksh?stkn=MTRsenY2MGF4cjlwcw==" target="_blank"
+                    class="flex items-center gap-2 hover:text-pink-400 transition-colors">
+                    <i class="fa-brands fa-instagram text-lg text-pink-500"></i>
+                    <span>Instagram</span>
+                </a>
+
+                <!-- WhatsApp Link -->
+                <a href="https://chat.whatsapp.com/FEmNZY4wUoaBLF3iXweC1w" target="_blank"
+                    class="flex items-center gap-2 hover:text-emerald-400 transition-colors">
+                    <i class="fa-brands fa-whatsapp text-lg text-emerald-500"></i>
+                    <span>WhatsApp</span>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+
+        // --- Logout Logic ---
+const logoutBtn = document.getElementById('logoutBtn');
+
+if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+        // 1. Saved Name clear karein
+        localStorage.removeItem('snapiqUserName');
+
+        // 2. Header user badge hide karein
+        document.getElementById('userNameBadge').classList.add('hidden');
+
+        // 3. Settings Modal close karein
+        document.getElementById('settingsModal').classList.add('hidden');
+
+        // 4. Input clear karke Welcome Name Modal dubara show karein
+        document.getElementById('userNameInput').value = '';
+        document.getElementById('nameModal').classList.remove('hidden');
+    });
+}
+        // ========================================================
+        // GOOGLE SHEET WEB APP URL
+        // APNA GOOGLE APPS SCRIPT WEB APP LINK YAHAN REPLACE KAREIN
+        // ========================================================
+        const GOOGLE_SHEETS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxN_nno4rdgWlScp17gd3OO0GeA9IGKRhTnPHYGugS-NWZJuKUIFUHgJZ9zxsIUudU/exec";
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedName = localStorage.getItem('snapiqUserName');
+            const nameModal = document.getElementById('nameModal');
+            const nameForm = document.getElementById('nameForm');
+            const userNameInput = document.getElementById('userNameInput');
+            const nameError = document.getElementById('nameError');
+            const userNameBadge = document.getElementById('userNameBadge');
+            const headerUserName = document.getElementById('headerUserName');
+
+            // UI par naam update karne ka helper function
+            function displayUserHeaderName(name) {
+                if (name && headerUserName && userNameBadge) {
+                    headerUserName.innerText = name;
+                    userNameBadge.classList.remove('hidden');
+                }
+            }
+
+            // Agar naam pehle se saved hai toh header par dikhayein
+            if (savedName) {
+                nameModal.classList.add('hidden');
+                displayUserHeaderName(savedName);
+            } else {
+                nameModal.classList.remove('hidden');
+            }
+
+            nameForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const userName = userNameInput.value.trim();
+
+                // 5 letters se zyada ka check (Min 6 characters)
+                if (userName.length <= 5) {
+                    nameError.innerText = "Naam kam se kam 6 letters (5 se zyada) ka hona chahiye!";
+                    nameError.classList.remove('hidden');
+                    userNameInput.classList.add('border-rose-500');
+                    return;
+                }
+
+                // Error clear karein
+                nameError.classList.add('hidden');
+                userNameInput.classList.remove('border-rose-500');
+
+                // Local storage mein save karein
+                localStorage.setItem('snapiqUserName', userName);
+                
+                // Modal hide karein aur Header par Naam dikhayein
+                nameModal.classList.add('hidden');
+                displayUserHeaderName(userName);
+
+                // Google Sheet ya Local Node.js Server par bhejein
+                try {
+                    if (GOOGLE_SHEETS_WEB_APP_URL && GOOGLE_SHEETS_WEB_APP_URL !== "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE") {
+                        // Direct Google Sheet submit via Apps Script
+                        await fetch(GOOGLE_SHEETS_WEB_APP_URL, {
+                            method: 'POST',
+                            mode: 'no-cors',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ name: userName, date: new Date().toLocaleString() })
+                        });
+                        console.log('Successfully submitted to Google Sheet');
+                    } else {
+                        // Node.js Backend Server fallback
+                        await fetch('http://localhost:3000/api/register-user', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ name: userName })
+                        });
+                    }
+                } catch (err) {
+                    console.error('Failed to send name to server / Google Sheet:', err);
+                }
+            });
+        });
+
+        async function analyzeImage() {
+            if (!imagePreview.src || imagePreview.src === window.location.href) return;
+
+            emptyState.classList.add('hidden');
+            resultsGrid.classList.add('hidden');
+            loadingState.classList.remove('hidden');
+            statusBadge.textContent = "Processing...";
+            analyzeBtn.disabled = true;
+
+            const base64Data = imagePreview.src.split(',')[1];
+            const lang = localStorage.getItem('snapiqLang') || 'en';
+            const detail = localStorage.getItem('snapiqDetail') || 'medium';
+
+            try {
+                const response = await fetch("http://localhost:3000/api/analyze", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ base64Data, lang, detail })
+                });
+
+                const parsedData = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(parsedData.error || "Something went wrong");
+                }
+
+                document.getElementById('resName').innerText = parsedData.name || '---';
+                document.getElementById('resPurpose').innerText = parsedData.purpose || '---';
+                document.getElementById('resFeatures').innerText = parsedData.features || '---';
+                document.getElementById('resValue').innerText = parsedData.value || '---';
+                document.getElementById('resUsage').innerText = parsedData.usage || '---';
+                document.getElementById('resDetails').innerText = parsedData.details || '---';
+
+                loadingState.classList.add('hidden');
+                resultsGrid.classList.remove('hidden');
+                statusBadge.textContent = "Completed";
+
+            } catch (err) {
+                console.error(err);
+                alert("Error: " + err.message);
+                loadingState.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                statusBadge.textContent = "Error";
+            }
+
+            analyzeBtn.disabled = false;
+        }
+
+        // Elements
+        const imageInput = document.getElementById('imageInput');
+        const dropzone = document.getElementById('dropzone');
+        const imagePreview = document.getElementById('imagePreview');
+        const uploadPrompt = document.getElementById('uploadPrompt');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const emptyState = document.getElementById('emptyState');
+        const loadingState = document.getElementById('loadingState');
+        const resultsGrid = document.getElementById('resultsGrid');
+        const statusBadge = document.getElementById('statusBadge');
+
+        // Settings Elements
+        const settingsModal = document.getElementById('settingsModal');
+        const openSettingsBtn = document.getElementById('openSettingsBtn');
+        const closeSettingsBtn = document.getElementById('closeSettingsBtn');
+        const saveSettingsBtn = document.getElementById('saveSettingsBtn');
+        const themeSelect = document.getElementById('themeSelect');
+        const langSelect = document.getElementById('langSelect');
+        const detailSelect = document.getElementById('detailSelect');
+
+        // Camera Elements
+        const openCameraBtn = document.getElementById('openCameraBtn');
+        const cameraModal = document.getElementById('cameraModal');
+        const cameraStream = document.getElementById('cameraStream');
+        const captureBtn = document.getElementById('captureBtn');
+        const closeCameraBtn = document.getElementById('closeCameraBtn');
+        const cameraCanvas = document.getElementById('cameraCanvas');
+        let stream = null;
+
+        // --- Load Settings on Startup ---
+        window.onload = () => {
+            const savedTheme = localStorage.getItem('snapiqTheme') || 'natural';
+            const savedLang = localStorage.getItem('snapiqLang') || 'en';
+            const savedDetail = localStorage.getItem('snapiqDetail') || 'medium';
+
+            themeSelect.value = savedTheme;
+            langSelect.value = savedLang;
+            detailSelect.value = savedDetail;
+
+            document.body.setAttribute("data-theme", savedTheme);
+        };
+
+        // --- Settings Logic ---
+        openSettingsBtn.addEventListener('click', () => settingsModal.classList.remove('hidden'));
+        closeSettingsBtn.addEventListener('click', () => settingsModal.classList.add('hidden'));
+
+        saveSettingsBtn.addEventListener('click', () => {
+            const selectedTheme = themeSelect.value;
+            const selectedLang = langSelect.value;
+            const selectedDetail = detailSelect.value;
+
+            localStorage.setItem('snapiqTheme', selectedTheme);
+            localStorage.setItem('snapiqLang', selectedLang);
+            localStorage.setItem('snapiqDetail', selectedDetail);
+
+            document.body.setAttribute("data-theme", selectedTheme);
+
+            settingsModal.classList.add('hidden');
+            statusBadge.textContent = "Settings Saved";
+        });
+
+        // --- File Upload Logic ---
+        dropzone.addEventListener('click', () => imageInput.click());
+
+        imageInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) handleImage(file);
+        });
+
+        dropzone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropzone.classList.add('border-indigo-500');
+        });
+
+        dropzone.addEventListener('dragleave', () => dropzone.classList.remove('border-indigo-500'));
+
+        dropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropzone.classList.remove('border-indigo-500');
+            const file = e.dataTransfer.files[0];
+            if (file) handleImage(file);
+        });
+
+        function handleImage(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                showPreview(e.target.result);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function showPreview(base64Src) {
+            imagePreview.src = base64Src;
+            imagePreview.classList.remove('hidden');
+            uploadPrompt.classList.add('hidden');
+            analyzeBtn.disabled = false;
+            resetBtn.classList.remove('hidden');
+            statusBadge.textContent = "Image loaded";
+        }
+
+        function resetUpload() {
+            imageInput.value = '';
+            imagePreview.src = '';
+            imagePreview.classList.add('hidden');
+            uploadPrompt.classList.remove('hidden');
+            analyzeBtn.disabled = true;
+            resetBtn.classList.add('hidden');
+            emptyState.classList.remove('hidden');
+            resultsGrid.classList.add('hidden');
+            loadingState.classList.add('hidden');
+            statusBadge.textContent = "Ready";
+        }
+
+        // --- Camera Logic ---
+        openCameraBtn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+                cameraStream.srcObject = stream;
+                cameraModal.classList.remove('hidden');
+            } catch (err) {
+                alert("Camera access denied or not available!");
+                console.error(err);
+            }
+        });
+
+        closeCameraBtn.addEventListener('click', closeCamera);
+
+        function closeCamera() {
+            cameraModal.classList.add('hidden');
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+        }
+
+        captureBtn.addEventListener('click', () => {
+            const context = cameraCanvas.getContext('2d');
+            cameraCanvas.width = cameraStream.videoWidth;
+            cameraCanvas.height = cameraStream.videoHeight;
+            context.drawImage(cameraStream, 0, 0, cameraCanvas.width, cameraCanvas.height);
+
+            const capturedImage = cameraCanvas.toDataURL('image/jpeg', 0.8);
+            showPreview(capturedImage);
+            closeCamera();
+        });
+    </script>
+</body>
+
+</html>
